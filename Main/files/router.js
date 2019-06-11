@@ -31,7 +31,6 @@ newUser.save(function (err, data) {
         console.log('Saved Failed,Something is wrong !')
     } else {
         console.log('Save Successfully !')
-        // console.log(data)
     }
 })
 
@@ -47,7 +46,11 @@ router.post('/index', function (req, res) {
             console.log(err)
         } else {
             if(data.length === 0){
-                
+                /* 如果账户不存在之后的操作 */
+                res.render('login.html',{
+                    tips:'您输入的邮箱或密码有误,请重试',
+                    data:data
+                })
             } else {
                 res.render('index.html')
             }
