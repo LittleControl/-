@@ -58,4 +58,8 @@ router.post('/index', function (req, res) {
     })
 })
 
+router.get('/dashboard',function(req,res){
+    res.render('dashboard.html')
+})
+
 module.exports = router
