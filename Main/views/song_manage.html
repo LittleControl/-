@@ -46,9 +46,9 @@
         <div class="sidebar-sticky">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link active" href="/dashboard">
+              <a class="nav-link" href="/dashboard">
                 <span data-feather="home"></span>
-                仪表盘 <span class="sr-only">(current)</span>
+                仪表盘
               </a>
             </li>
             <li class="nav-item">
@@ -58,9 +58,9 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/song_manage">
+              <a class="nav-link active" href="/song_manage">
                 <span data-feather="shopping-cart"></span>
-                管理歌曲
+                管理歌曲 <span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
@@ -125,6 +125,7 @@
                 <th>播放量</th>
                 <th>上架时间</th>
                 <th>评论数</th>
+                <th>操作</th>
               </tr>
             </thead>
             <tbody>
@@ -133,9 +134,14 @@
                 <td>{{$value.name}}</td>
                 <td>{{$value.singer}}</td>
                 <td>{{$value.playNum}}</td>
-                <td>{{$value.playNum}}</td>
                 <td>{{$value.upTime}}</td>
                 <td>{{$value.commitNum}}</td>
+                <td>
+                  <a href="/update?id={{$value.id}}"><button type="button"
+                      class="btn btn-outline-warning">修改</button></a>
+                  <a href="/delete?id={{$value.id}}"><button type="button"
+                      class="btn btn-outline-danger">删除</button></a>
+                </td>
               </tr>
               {{/each}}
             </tbody>
