@@ -35,46 +35,68 @@ newUser.save(function (err, data) {
 })
 
 var song = mongoose.Schema({
-    name:{
-        required:true,
-        type:String
+    name: {
+        required: true,
+        type: String
     },
-    singer:{
-        required:true,
-        type:String
+    singer: {
+        required: true,
+        type: String
     },
-    playNum:{
-        required:true,
-        type:Number
+    playNum: {
+        required: true,
+        type: Number
     },
-    upTime:{
-        type:Date,
-        required:true,
+    upTime: {
+        type: Date,
+        required: true,
         default: new Date
     },
     commitNum: {
-        type:Number,
-        default:0
+        type: Number,
+        default: 0
     }
 })
-var Song = mongoose.model('Song',song)
+var Song = mongoose.model('Song', song)
 
+var user = mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
+    song: {
+        type: String,
+        required: true,
+    },
+    commit_time:{
+        type:Date,
+        required:true,
+        default:new Date
+    }
+})
+
+var User = mongoose.model("User", user)
 
 var router = express.Router()
+
 router.get('/', function (req, res) {
     res.render('login.html')
 })
 
 router.post('/index', function (req, res) {
-    Account.find(req.body,function(err,data){
-        if(err){
+    Account.find(req.body, function (err, data) {
+        if (err) {
             console.log(err)
         } else {
-            if(data.length === 0){
+            if (data.length === 0) {
                 /* 如果账户不存在之后的操作 */
-                res.render('login.html',{
-                    tips:'您输入的邮箱或密码有误,请重试',
-                    data:data
+                res.render('login.html', {
+                    tips: '您输入的邮箱或密码有误,请重试',
+                    data: data
                 })
             } else {
                 res.render('index.html')
@@ -83,27 +105,27 @@ router.post('/index', function (req, res) {
     })
 })
 
-router.get('/dashboard',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/dashboard', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             console.log('DataBase Has Some Wrong !')
         } else {
 
-            res.render('dashboard.html',{
-                songs:data  
+            res.render('dashboard.html', {
+                songs: data
             })
         }
     })
 })
 
-router.get('/add',function(req,res){
+router.get('/add', function (req, res) {
     res.render('add.html')
 })
 
-router.post('/add',function(req,res){
+router.post('/add', function (req, res) {
     var newSong = new Song(req.body)
-    newSong.save(function(err,data){
-        if(err){
+    newSong.save(function (err, data) {
+        if (err) {
             return res.status(500).send(err)
             // return res.status(500).send('Server Errror !')
         }
@@ -111,18 +133,18 @@ router.post('/add',function(req,res){
     })
 })
 
-router.get('/song_manage',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/song_manage', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
-        res.render('song_manage.html',{
-            songs:data
+        res.render('song_manage.html', {
+            songs: data
         })
     })
 })
 
-router.get('/update',function(req,res){
+router.get('/update', function (req, res) {
     var path = req.originalUrl
     var id = req.query.id
     Song.findOne({
@@ -144,7 +166,7 @@ router.get('/update',function(req,res){
     })
 })
 
-router.post('/update',function(req,res){
+router.post('/update', function (req, res) {
     var obj = {
         id: req.query.id,
         name: req.body.name,
@@ -164,8 +186,7 @@ router.post('/update',function(req,res){
     })
 })
 
-
-router.get('/delete',function(req,res){
+router.get('/delete', function (req, res) {
     var path = req.originalUrl
     var id = req.query.id
     Song.findOne({
@@ -187,11 +208,11 @@ router.get('/delete',function(req,res){
     })
 })
 
-router.post('/delete',function(req,res){
+router.post('/delete', function (req, res) {
     var id = req.query.id
     Song.deleteOne({
         _id: id
-    }, obj, function (err, data) {
+    }, function (err, data) {
         if (err) {
             return res.status(500).send("Server Error !")
         } else {
@@ -200,6 +221,114 @@ router.post('/delete',function(req,res){
     })
 })
 
+router.get('/add_commit', function (req, res) {
+    var id = req.query.id
+    Song.findOne({
+        _id: id
+    }, function (err, data) {
+        if (err) {
+            console.log("Nothing Can Be Find")
+        } else {
+            var song = {}
+            song.name = data.name
+            res.render('add_commit.html', song)
+        }
+    })
+})
 
+router.post('/add_commit', function (req, res) {
+    var obj = {
+        name: req.body.name,
+        message: req.body.message,
+        song: req.body.song
+    }
+    var newUser = new User(obj)
+    newUser.save(function (err, data) {
+        if (err) {
+            return res.status(500).send("Server Error !")
+        }
+    })
+    res.redirect('/last_commit')
+})
+
+router.get('/last_commit', function (req, res) {
+    User.find(function (err, data) {
+        if (err) {
+            return res.status(500).send('Server Error !')
+        }
+        res.render('last_commit.html', {
+            commits: data
+        })
+    })
+})
+
+router.get('/commit_manage',function(req,res){
+    User.find(function(err,data){
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        res.render('commit_manage.html',{
+            commits:data
+        })
+    })
+})
+
+router.get('/update_commit',function(req,res){
+    var id = req.query.id
+    User.findOne({
+        _id: id
+    }, function (err, data) {
+        if (err) {
+            console.log("Nothing Can Be Find")
+        } else {
+            var commit = {}
+            commit.id = id
+            commit.name = data.name
+            commit.message = data.message
+            res.render('update_commit.html', commit)
+        }
+    })
+})
+
+router.post('/update_commit',function(req,res){
+    User.updateOne({
+        _id:req.query.id
+    },req.body,function(err){
+        if(err){
+            return res.status(500).send('Server Error !')
+        } else {
+            console.log('Update Commit Successfully !')
+        }
+    })
+    res.redirect('/commit_manage')
+})
+
+router.get('/delete_commit',function(req,res){
+    User.findOne({
+        _id:req.query.id
+    },function(err,data){
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        var commit = {}
+        commit.id = req.query.id
+        commit.name = data.name
+        commit.message = data.message
+        res.render('delete_commit.html',commit)
+    })
+})
+
+router.post('/delete_commit',function(req,res){
+    User.deleteOne({
+        _id:req.query.id
+    },function(err){
+        if(err){
+            console.log('Something is wrong !')
+        } else {
+            console.log('Delete Successfully!')
+        }
+    })
+    res.redirect('/commit_manage')
+})
 
 module.exports = router
