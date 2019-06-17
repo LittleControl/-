@@ -268,6 +268,7 @@ router.get('/commit_manage',function(req,res){
             return res.status(500).send('Server Error !')
         }
         res.render('commit_manage.html',{
+            
             commits:data
         })
     })
@@ -332,12 +333,113 @@ router.post('/delete_commit',function(req,res){
 })
 
 function TimeSort(arr){
-
+    var left = 0;
+    var right = arr.length-1
+    function Temp(arr,left,right){
+        if(left >= right){
+            return
+        }
+        var count = 0
+        for(var i = 0; i<right; i++){
+            if(arr[i].upTime.getTime() > arr[right].upTime.getTime()){
+                var temp = arr[i]
+                arr[i]= arr[count]
+                arr[count] = temp
+                count++
+            }
+        }
+        var temp = arr[right]
+        arr[right] = arr[count]
+        arr[count] = temp
+        Temp(arr,left,count-1)
+        Temp(arr,count+1,right)
+    }
+    Temp(arr,left,right)
+}
+function PlayNumSort(arr){
+    var left = 0;
+    var right = arr.length-1
+    function Temp(arr,left,right){
+        if(left >= right){
+            return
+        }
+        var count = 0
+        for(var i = 0; i<right; i++){
+            if(arr[i].playNum > arr[right].playNum){
+                var temp = arr[i]
+                arr[i]= arr[count]
+                arr[count] = temp
+                count++
+            }
+        }
+        var temp = arr[right]
+        arr[right] = arr[count]
+        arr[count] = temp
+        Temp(arr,left,count-1)
+        Temp(arr,count+1,right)
+    }
+    Temp(arr,left,right)
+}
+function CommitNumSort(arr){
+    var left = 0;
+    var right = arr.length-1
+    function Temp(arr,left,right){
+        if(left >= right){
+            return
+        }
+        var count = 0
+        for(var i = 0; i<right; i++){
+            if(arr[i].commitNum > arr[right].commitNum){
+                var temp = arr[i]
+                arr[i]= arr[count]
+                arr[count] = temp
+                count++
+            }
+        }
+        var temp = arr[right]
+        arr[right] = arr[count]
+        arr[count] = temp
+        Temp(arr,left,count-1)
+        Temp(arr,count+1,right)
+    }
+    Temp(arr,left,right)
+}
+function NameSort(arr){
+    var left = 0;
+    var right = arr.length-1
+    function Temp(arr,left,right){
+        if(left >= right){
+            return
+        }
+        var count = 0
+        for(var i = 0; i<right; i++){
+            if(arr[i].singer > arr[right].singer){
+                var temp = arr[i]
+                arr[i]= arr[count]
+                arr[count] = temp
+                count++
+            }
+        }
+        var temp = arr[right]
+        arr[right] = arr[count]
+        arr[count] = temp
+        Temp(arr,left,count-1)
+        Temp(arr,count+1,right)
+    }
+    Temp(arr,left,right)
 }
 
 router.get('/sortByTime',function(req,res){
     Song.find(function(err,data){
-        console.log(data[1] instanceof Date)
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        TimeSort(data)
+        
+        res.render('sortByTime.html',{
+            songs:data
+        })
+
     })
 })
 
