@@ -404,7 +404,7 @@ function CommitNumSort(arr){
     }
     Temp(arr,left,right)
 }
-function NameSort(arr){
+function SingerSort(arr){
     var left = 0;
     var right = arr.length-1
     function Temp(arr,left,right){
@@ -437,6 +437,48 @@ router.get('/sortByTime',function(req,res){
         TimeSort(data)
         
         res.render('sortByTime.html',{
+            songs:data
+        })
+
+    })
+})
+
+router.get('/sortByPlayNum',function(req,res){
+    Song.find(function(err,data){
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        PlayNumSort(data)
+        
+        res.render('sortByPlayNum.html',{
+            songs:data
+        })
+
+    })
+})
+
+router.get('/sortByCommitNum',function(req,res){
+    Song.find(function(err,data){
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        CommitNumSort(data)
+        
+        res.render('sortByCommitNum.html',{
+            songs:data
+        })
+
+    })
+})
+
+router.get('/sortBySinger',function(req,res){
+    Song.find(function(err,data){
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        SingerSort(data)
+        
+        res.render('sortBySInger.html',{
             songs:data
         })
 
