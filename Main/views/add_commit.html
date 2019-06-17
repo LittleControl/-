@@ -20,6 +20,12 @@
       user-select: none;
     }
 
+    #name{
+      color: red;
+      font-size: 25px;
+      font-style: italic;
+    }
+
     @media (min-width: 768px) {
       .bd-placeholder-img-lg {
         font-size: 3.5rem;
@@ -115,7 +121,7 @@
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
         <br>
         <div class="container">
-          <p>您正在对{{name}}的评论</p>
+          <p>您正在对<span id="name">{{name}}</span>的评论</p>
           <form method="POST" action="/add_commit">
             <div class="form-group">
               <label for="formGroupExampleInput">评论者名字</label>

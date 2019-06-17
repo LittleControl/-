@@ -331,4 +331,14 @@ router.post('/delete_commit',function(req,res){
     res.redirect('/commit_manage')
 })
 
+function TimeSort(arr){
+
+}
+
+router.get('/sortByTime',function(req,res){
+    Song.find(function(err,data){
+        console.log(data[1] instanceof Date)
+    })
+})
+
 module.exports = router
