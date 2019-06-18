@@ -339,8 +339,8 @@ function TimeSort(arr){
         if(left >= right){
             return
         }
-        var count = 0
-        for(var i = 0; i<right; i++){
+        var count = left
+        for(var i = left; i<right; i++){
             if(arr[i].upTime.getTime() > arr[right].upTime.getTime()){
                 var temp = arr[i]
                 arr[i]= arr[count]
@@ -363,8 +363,8 @@ function PlayNumSort(arr){
         if(left >= right){
             return
         }
-        var count = 0
-        for(var i = 0; i<right; i++){
+        var count = left
+        for(var i = left; i<right; i++){
             if(arr[i].playNum > arr[right].playNum){
                 var temp = arr[i]
                 arr[i]= arr[count]
@@ -387,8 +387,8 @@ function CommitNumSort(arr){
         if(left >= right){
             return
         }
-        var count = 0
-        for(var i = 0; i<right; i++){
+        var count = left
+        for(var i = left; i<right; i++){
             if(arr[i].commitNum > arr[right].commitNum){
                 var temp = arr[i]
                 arr[i]= arr[count]
@@ -411,8 +411,8 @@ function SingerSort(arr){
         if(left >= right){
             return
         }
-        var count = 0
-        for(var i = 0; i<right; i++){
+        var count = left
+        for(var i = left; i<right; i++){
             if(arr[i].singer > arr[right].singer){
                 var temp = arr[i]
                 arr[i]= arr[count]
