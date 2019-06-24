@@ -22,17 +22,17 @@ var account = mongoose.Schema({
     }
 })
 var Account = mongoose.model('Account', account)
-var newUser = new Account({
-    email: 'littlecontrol@qq.com',
-    password: 'Nothing'
-})
-newUser.save(function (err, data) {
-    if (err) {
-        console.log('Saved Failed,Something is wrong !')
-    } else {
-        console.log('Save Successfully !')
-    }
-})
+// var newUser = new Account({
+//     email: 'littlecontrol@qq.com',
+//     password: 'Nothing'
+// })
+// newUser.save(function (err, data) {
+//     if (err) {
+//         console.log('Saved Failed,Something is wrong !')
+//     } else {
+//         console.log('Save Successfully !')
+//     }
+// })
 
 var song = mongoose.Schema({
     name: {
@@ -87,8 +87,12 @@ router.get('/', function (req, res) {
     res.render('login.html')
 })
 
+router.get('/index',function(req,res){
+    res.render('404.html')
+})
+
 router.post('/index', function (req, res) {
-    Account.find(req.body, function (err, data) {
+    Account.findOne(req.body, function (err, data) {
         if (err) {
             console.log(err)
         } else {
@@ -96,25 +100,38 @@ router.post('/index', function (req, res) {
                 /* 如果账户不存在之后的操作 */
                 res.render('login.html', {
                     tips: '您输入的邮箱或密码有误,请重试',
-                    data: data
                 })
             } else {
-                res.render('index.html')
+                res.render('index.html',{
+                    id:data.id,
+                    email:data.email
+                })
             }
         }
     })
 })
 
 router.get('/dashboard', function (req, res) {
-    Song.find(function (err, data) {
-        if (err) {
-            console.log('DataBase Has Some Wrong !')
-        } else {
-
-            res.render('dashboard.html', {
-                songs: data
-            })
+    /* 这里借用JSON方法stringify方法来判断对象是否为空 */
+    if(JSON.stringify(req.query) === '{}'){
+        return res.render('404.html')
+    }
+    Account.findOne(req.body,function(err,data){
+        if(err){
+            return res.status(500).send("Server Error !")
         }
+        if(JSON.stringify(data) === '{}'){
+            return res.render('404.html')
+        }
+        Song.find(function (err, data) {
+            if (err) {
+                console.log('DataBase Has Some Wrong !')
+            } else {
+                res.render('dashboard.html', {
+                    songs: data
+                })
+            }
+        })
     })
 })
 
