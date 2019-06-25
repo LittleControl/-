@@ -72,10 +72,10 @@ var user = mongoose.Schema({
         type: String,
         required: true,
     },
-    commit_time:{
-        type:Date,
-        required:true,
-        default:new Date
+    commit_time: {
+        type: Date,
+        required: true,
+        default: new Date
     }
 })
 
@@ -87,7 +87,7 @@ router.get('/', function (req, res) {
     res.render('login.html')
 })
 
-router.get('/index',function(req,res){
+router.get('/index', function (req, res) {
     res.render('404.html')
 })
 
@@ -102,9 +102,27 @@ router.post('/index', function (req, res) {
                     tips: '您输入的邮箱或密码有误,请重试',
                 })
             } else {
-                res.render('index.html',{
-                    id:data.id,
-                    email:data.email
+                User.find(function (err, data1) {
+                    if (err) {
+                        console.log('Someting is wrong !')
+                    } else {
+                        /* 首页一共有4个需要渲染的地方,每个里面需要两个data1的数据 */
+                        var songs = [{},{},{},{}]
+                        /* 随机渲染 */
+                        for(let i =0;i<4;i++){
+                            var ran1 = Math.round(Math.random()*(data1.length-1));
+                            var ran2 = Math.round(Math.random()*(data1.length-1));
+                            songs[i].song1 = data1[ran1].song
+                            songs[i].message1 = data1[ran1].message
+                            songs[i].song2 = data1[ran2].song
+                            songs[i].message2 = data1[ran2].message
+                        }
+                        res.render('index.html',{
+                            id:data.id,
+                            email:data.email,
+                            songs:songs
+                        })
+                    }
                 })
             }
         }
@@ -113,14 +131,14 @@ router.post('/index', function (req, res) {
 
 router.get('/dashboard', function (req, res) {
     /* 这里借用JSON方法stringify方法来判断对象是否为空 */
-    if(JSON.stringify(req.query) === '{}'){
+    if (JSON.stringify(req.query) === '{}') {
         return res.render('404.html')
     }
-    Account.findOne(req.body,function(err,data){
-        if(err){
+    Account.findOne(req.body, function (err, data) {
+        if (err) {
             return res.status(500).send("Server Error !")
         }
-        if(JSON.stringify(data) === '{}'){
+        if (JSON.stringify(data) === '{}') {
             return res.render('404.html')
         }
         Song.find(function (err, data) {
@@ -279,19 +297,19 @@ router.get('/last_commit', function (req, res) {
     })
 })
 
-router.get('/commit_manage',function(req,res){
-    User.find(function(err,data){
-        if(err){
+router.get('/commit_manage', function (req, res) {
+    User.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
-        res.render('commit_manage.html',{
-            
-            commits:data
+        res.render('commit_manage.html', {
+
+            commits: data
         })
     })
 })
 
-router.get('/update_commit',function(req,res){
+router.get('/update_commit', function (req, res) {
     var id = req.query.id
     User.findOne({
         _id: id
@@ -308,11 +326,11 @@ router.get('/update_commit',function(req,res){
     })
 })
 
-router.post('/update_commit',function(req,res){
+router.post('/update_commit', function (req, res) {
     User.updateOne({
-        _id:req.query.id
-    },req.body,function(err){
-        if(err){
+        _id: req.query.id
+    }, req.body, function (err) {
+        if (err) {
             return res.status(500).send('Server Error !')
         } else {
             console.log('Update Commit Successfully !')
@@ -321,26 +339,26 @@ router.post('/update_commit',function(req,res){
     res.redirect('/commit_manage')
 })
 
-router.get('/delete_commit',function(req,res){
+router.get('/delete_commit', function (req, res) {
     User.findOne({
-        _id:req.query.id
-    },function(err,data){
-        if(err){
+        _id: req.query.id
+    }, function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
         var commit = {}
         commit.id = req.query.id
         commit.name = data.name
         commit.message = data.message
-        res.render('delete_commit.html',commit)
+        res.render('delete_commit.html', commit)
     })
 })
 
-router.post('/delete_commit',function(req,res){
+router.post('/delete_commit', function (req, res) {
     User.deleteOne({
-        _id:req.query.id
-    },function(err){
-        if(err){
+        _id: req.query.id
+    }, function (err) {
+        if (err) {
             console.log('Something is wrong !')
         } else {
             console.log('Delete Successfully!')
@@ -349,18 +367,18 @@ router.post('/delete_commit',function(req,res){
     res.redirect('/commit_manage')
 })
 
-function TimeSort(arr){
+function TimeSort(arr) {
     var left = 0;
-    var right = arr.length-1
-    function Temp(arr,left,right){
-        if(left >= right){
+    var right = arr.length - 1
+    function Temp(arr, left, right) {
+        if (left >= right) {
             return
         }
         var count = left
-        for(var i = left; i<right; i++){
-            if(arr[i].upTime.getTime() > arr[right].upTime.getTime()){
+        for (var i = left; i < right; i++) {
+            if (arr[i].upTime.getTime() > arr[right].upTime.getTime()) {
                 var temp = arr[i]
-                arr[i]= arr[count]
+                arr[i] = arr[count]
                 arr[count] = temp
                 count++
             }
@@ -368,23 +386,23 @@ function TimeSort(arr){
         var temp = arr[right]
         arr[right] = arr[count]
         arr[count] = temp
-        Temp(arr,left,count-1)
-        Temp(arr,count+1,right)
+        Temp(arr, left, count - 1)
+        Temp(arr, count + 1, right)
     }
-    Temp(arr,left,right)
+    Temp(arr, left, right)
 }
-function PlayNumSort(arr){
+function PlayNumSort(arr) {
     var left = 0;
-    var right = arr.length-1
-    function Temp(arr,left,right){
-        if(left >= right){
+    var right = arr.length - 1
+    function Temp(arr, left, right) {
+        if (left >= right) {
             return
         }
         var count = left
-        for(var i = left; i<right; i++){
-            if(arr[i].playNum > arr[right].playNum){
+        for (var i = left; i < right; i++) {
+            if (arr[i].playNum > arr[right].playNum) {
                 var temp = arr[i]
-                arr[i]= arr[count]
+                arr[i] = arr[count]
                 arr[count] = temp
                 count++
             }
@@ -392,23 +410,23 @@ function PlayNumSort(arr){
         var temp = arr[right]
         arr[right] = arr[count]
         arr[count] = temp
-        Temp(arr,left,count-1)
-        Temp(arr,count+1,right)
+        Temp(arr, left, count - 1)
+        Temp(arr, count + 1, right)
     }
-    Temp(arr,left,right)
+    Temp(arr, left, right)
 }
-function CommitNumSort(arr){
+function CommitNumSort(arr) {
     var left = 0;
-    var right = arr.length-1
-    function Temp(arr,left,right){
-        if(left >= right){
+    var right = arr.length - 1
+    function Temp(arr, left, right) {
+        if (left >= right) {
             return
         }
         var count = left
-        for(var i = left; i<right; i++){
-            if(arr[i].commitNum > arr[right].commitNum){
+        for (var i = left; i < right; i++) {
+            if (arr[i].commitNum > arr[right].commitNum) {
                 var temp = arr[i]
-                arr[i]= arr[count]
+                arr[i] = arr[count]
                 arr[count] = temp
                 count++
             }
@@ -416,23 +434,23 @@ function CommitNumSort(arr){
         var temp = arr[right]
         arr[right] = arr[count]
         arr[count] = temp
-        Temp(arr,left,count-1)
-        Temp(arr,count+1,right)
+        Temp(arr, left, count - 1)
+        Temp(arr, count + 1, right)
     }
-    Temp(arr,left,right)
+    Temp(arr, left, right)
 }
-function SingerSort(arr){
+function SingerSort(arr) {
     var left = 0;
-    var right = arr.length-1
-    function Temp(arr,left,right){
-        if(left >= right){
+    var right = arr.length - 1
+    function Temp(arr, left, right) {
+        if (left >= right) {
             return
         }
         var count = left
-        for(var i = left; i<right; i++){
-            if(arr[i].singer > arr[right].singer){
+        for (var i = left; i < right; i++) {
+            if (arr[i].singer > arr[right].singer) {
                 var temp = arr[i]
-                arr[i]= arr[count]
+                arr[i] = arr[count]
                 arr[count] = temp
                 count++
             }
@@ -440,63 +458,63 @@ function SingerSort(arr){
         var temp = arr[right]
         arr[right] = arr[count]
         arr[count] = temp
-        Temp(arr,left,count-1)
-        Temp(arr,count+1,right)
+        Temp(arr, left, count - 1)
+        Temp(arr, count + 1, right)
     }
-    Temp(arr,left,right)
+    Temp(arr, left, right)
 }
 
-router.get('/sortByTime',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/sortByTime', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
         TimeSort(data)
-        
-        res.render('sortByTime.html',{
-            songs:data
+
+        res.render('sortByTime.html', {
+            songs: data
         })
 
     })
 })
 
-router.get('/sortByPlayNum',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/sortByPlayNum', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
         PlayNumSort(data)
-        
-        res.render('sortByPlayNum.html',{
-            songs:data
+
+        res.render('sortByPlayNum.html', {
+            songs: data
         })
 
     })
 })
 
-router.get('/sortByCommitNum',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/sortByCommitNum', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
         CommitNumSort(data)
-        
-        res.render('sortByCommitNum.html',{
-            songs:data
+
+        res.render('sortByCommitNum.html', {
+            songs: data
         })
 
     })
 })
 
-router.get('/sortBySinger',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/sortBySinger', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
         SingerSort(data)
-        
-        res.render('sortBySInger.html',{
-            songs:data
+
+        res.render('sortBySInger.html', {
+            songs: data
         })
 
     })
