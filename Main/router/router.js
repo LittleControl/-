@@ -520,4 +520,23 @@ router.get('/sortBySinger', function (req, res) {
     })
 })
 
+router.get('/search',function(req,res){
+    Song.find(function(err,data){
+        if(err){
+            return res.status(500).send('Server Error !')
+        }
+        var songs = []
+        for(let i =0;i<data.length;i++){
+            var name = data[i].name;
+            var singer = data[i].singer
+            if(name.indexOf(req.query.key)+singer.indexOf(req.query.key) > -2){
+                songs.push(data[i])
+            }
+        }
+        res.render('search.html',{
+            songs:songs
+        })
+    })
+})
+
 module.exports = router
