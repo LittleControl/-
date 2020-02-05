@@ -22,17 +22,17 @@ var account = mongoose.Schema({
     }
 })
 var Account = mongoose.model('Account', account)
-// var newUser = new Account({
-//     email: 'littlecontrol@qq.com',
-//     password: 'Nothing'
-// })
-// newUser.save(function (err, data) {
-//     if (err) {
-//         console.log('Saved Failed,Something is wrong !')
-//     } else {
-//         console.log('Save Successfully !')
-//     }
-// })
+var newUser = new Account({
+    email: 'littlecontrol@qq.com',
+    password: 'Nothing'
+})
+newUser.save(function (err, data) {
+    if (err) {
+        console.log('Saved Failed,Something is wrong !')
+    } else {
+        console.log('Save Successfully !')
+    }
+})
 
 var song = mongoose.Schema({
     name: {
@@ -80,6 +80,12 @@ var user = mongoose.Schema({
 })
 
 var User = mongoose.model("User", user)
+var user1 = new User({
+    name: 'Nothing',
+    message: 'Cool',
+    song: 'Nothing',
+})
+user1.save()
 
 var router = express.Router()
 
@@ -107,20 +113,20 @@ router.post('/index', function (req, res) {
                         console.log('Someting is wrong !')
                     } else {
                         /* 首页一共有4个需要渲染的地方,每个里面需要两个data1的数据 */
-                        var songs = [{},{},{},{}]
+                        var songs = [{}, {}, {}, {}]
                         /* 随机渲染 */
-                        for(let i =0;i<4;i++){
-                            var ran1 = Math.round(Math.random()*(data1.length-1));
-                            var ran2 = Math.round(Math.random()*(data1.length-1));
+                        for (let i = 0; i < 4; i++) {
+                            var ran1 = Math.round(Math.random() * (data1.length - 1));
+                            var ran2 = Math.round(Math.random() * (data1.length - 1));
                             songs[i].song1 = data1[ran1].song
                             songs[i].message1 = data1[ran1].message
                             songs[i].song2 = data1[ran2].song
                             songs[i].message2 = data1[ran2].message
                         }
-                        res.render('index.html',{
-                            id:data.id,
-                            email:data.email,
-                            songs:songs
+                        res.render('index.html', {
+                            id: data.id,
+                            email: data.email,
+                            songs: songs
                         })
                     }
                 })
@@ -520,21 +526,21 @@ router.get('/sortBySinger', function (req, res) {
     })
 })
 
-router.get('/search',function(req,res){
-    Song.find(function(err,data){
-        if(err){
+router.get('/search', function (req, res) {
+    Song.find(function (err, data) {
+        if (err) {
             return res.status(500).send('Server Error !')
         }
         var songs = []
-        for(let i =0;i<data.length;i++){
+        for (let i = 0; i < data.length; i++) {
             var name = data[i].name;
             var singer = data[i].singer
-            if(name.indexOf(req.query.key)+singer.indexOf(req.query.key) > -2){
+            if (name.indexOf(req.query.key) + singer.indexOf(req.query.key) > -2) {
                 songs.push(data[i])
             }
         }
-        res.render('search.html',{
-            songs:songs
+        res.render('search.html', {
+            songs: songs
         })
     })
 })
